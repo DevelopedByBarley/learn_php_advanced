@@ -17,6 +17,17 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
 
 
 
+function homeHandler()
+{
+    require './build/index.html';
+}
+
+function notFoundHandler() {
+    require './build/index.html';
+}
+
+
+
 function getInstrumentById($id)
 {
     $pdo = getConnection();
@@ -24,7 +35,7 @@ function getInstrumentById($id)
     $statement->execute([$id]);
     $instrument = $statement->fetch(PDO::FETCH_ASSOC);
     return $instrument;
-}
+}    
 
 function getNotFoundByIdError($id)
 {
@@ -33,17 +44,10 @@ function getNotFoundByIdError($id)
         'error' => [
             'id' => $id,
             'message' => 'invalid instrument id'
-        ]
-    ]);
-}
+        ]    
+    ]);    
+}    
 
-
-
-
-function homeHandler()
-{
-    require './build/index.html';
-}
 
 
 
@@ -186,11 +190,11 @@ $uri = rawurldecode($uri);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        // ... 404 Not Found
+        notFoundHandler();
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeInfo[1];
-        // ... 405 Method Not Allowed
+        notFoundHandler();
         break;
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
