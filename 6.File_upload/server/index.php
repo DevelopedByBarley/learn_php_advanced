@@ -21,7 +21,15 @@ $handlerFunction();
 
 function homeHandler()
 {
-    echo render('home.phtml', []);
+    $pdo = getConnection();
+    $stmt = $pdo->prepare("SELECT * FROM `images`");
+    $stmt->execute();
+    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+
+    echo render('home.phtml', [
+        "images" => $images
+    ]);
 }
 
 
@@ -29,9 +37,9 @@ function homeHandler()
 function uploadHandler()
 {
     echo "<pre>";
-    $files = transformToSingleFiles($_FILES["fajlok"]); 
+    $files = transformToSingleFiles($_FILES["fajlok"]);
 
-    foreach($files as $file) {
+    foreach ($files as $file) {
         resizeAndSaveImage($file);
     }
 }
@@ -43,7 +51,7 @@ function resizeAndSaveImage($file)
     $whiteList = [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF];
 
 
-    if(!in_array(exif_imagetype($file['tmp_name']), $whiteList)) return false;
+    if (!in_array(exif_imagetype($file['tmp_name']), $whiteList)) return false;
 
     $rand = uniqid(rand(), true); // Random id
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION); // File kiterjesztéséhez való hozzájutás
@@ -53,11 +61,20 @@ function resizeAndSaveImage($file)
     $originalFileName = $rand . '.' . $ext;
     $directoryPath = "./public/images/";
 
-    $isMoveSuccessful = file_put_contents($directoryPath . $originalFileName, file_get_contents($file["tmp_name"]) );
+    $isMoveSuccessful = file_put_contents($directoryPath . $originalFileName, file_get_contents($file["tmp_name"]));
 
-    if(!$isMoveSuccessful) {
+    if (!$isMoveSuccessful) {
         return false;
     }
+
+    $pdo = getConnection();
+    $stmt = $pdo->prepare("INSERT INTO `images` (`name`, `type`) VALUES (?, ?)");
+    $stmt->execute([
+        $rand,
+        $ext
+    ]);
+
+    header("Location: /learn_php_advanced/6.File_upload/server/");
 }
 
 function transformToSingleFiles($rawFiles)

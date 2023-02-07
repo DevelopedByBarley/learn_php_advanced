@@ -31,7 +31,7 @@ CREATE TABLE `images` (
   `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexek a kiírt táblákhoz

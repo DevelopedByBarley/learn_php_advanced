@@ -41,7 +41,7 @@
     <div class="row">
       <?php foreach ($params['images'] ?? [] as $image) : ?>
         <div class="col-4 d-inline-block text-center mb-2">
-          <img class="img-fluid img-thumbnail" src="/public/images/md-<?= $image['name'] ?>.webp" alt="">
+          <img class="img-fluid img-thumbnail" src="/learn_php_advanced/6.File_upload/server/public/images/<?= $image['name'] ?>.<?= $image["type"] ?>" alt="">
         </div>
       <?php endforeach; ?>
     </div>
