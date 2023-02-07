@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Környezeti változók beállítása
+  SetEnv DB_HOST localhost
+  SetEnv DB_NAME email
+  SetEnv DB_USER Barley
+  SetEnv DB_PASSWORD Csak1enter
+
+  SetEnv SMTP_SENDER_EMAIL teszt@kodbazis.com
+  SetEnv SMTP_SENDER_NAME "Kódbázis"
+  SetEnv SMTP_USERNAME developedbybarley@gmail.com
+  SetEnv SMTP_PASSWORD Csak1enter
+  SetEnv SMTP_HOST smtp.gmail.com
+  SetEnv SMTP_PORT 465
+
+  SetEnv RECIPIENT_EMAIL teszt@kodbazis.com
+
+  # Public mappa és index.php beállítása
+  RewriteCond %{REQUEST_URI} ^.*favicon
+  RewriteRule ^(.*)$ src/favicon.ico [END]
+
+  RewriteCond %{REQUEST_URI} ^.*public/(.*)
+  RewriteRule ^(.*)$ src/public/%1 [END]
+
+  # Minden más esetben az index.php-t futtasd le
+  RewriteRule (.*)  src/index.php [QSA]
+</IfModule>
