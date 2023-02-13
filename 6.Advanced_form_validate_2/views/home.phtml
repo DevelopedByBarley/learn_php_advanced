@@ -10,10 +10,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-
 <body>
+  <?php
+
+  $isValidClass = function ($key) use ($params) {
+    if (!$params['errorMessages']) {
+      return "";
+    }
+    return count($params['errorMessages'][$key] ?? []) ? "is-invalid" : "is-valid";
+  };
+  ?>
   <div class="container">
-    <h1>Advanced Form validate 2</h1>
     <div class="p-4 mb-4 bg-light rounded-3">
       <div class="container">
         <h1 class="display-5 fw-bold">Form validáció</h1>
@@ -31,38 +38,46 @@
       <div class="form-row">
         <div class="mb-3">
           Név:
-          <input type="text" name="name" class="form-control" placeholder="Név" />
+          <input type="text" name="name" value="<?= $params['values']['name'] ?? '' ?>" class="form-control <?= $isValidClass('name') ?>" placeholder="Név" />
           <div class="invalid-feedback">
-
+            <?php foreach ($params['errorMessages']['name'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
       <div class="form-row">
         <div class="mb-3">
           Szerepkör:
-          <select class="custom-select form-control" name="role">
+          <select class="custom-select form-control <?= $isValidClass('role') ?> " name="role">
             <option value="worker" <?= ($params['values']['role'] ?? '') === "worker" ? 'selected' : '' ?>>Dolgozó</option>
             <option value="manager" <?= ($params['values']['role'] ?? '') === "manager" ? 'selected' : '' ?>>Menedzser</option>
             <option value="leader" <?= ($params['values']['role'] ?? '') === "leader" ? 'selected' : '' ?>>Vezető</option>
           </select>
           <div class="invalid-feedback">
-
+            <?php foreach ($params['errorMessages']['role'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
-
         <div class="mb-3">
           Életkor
-          <input type="number" name="age" class="form-control" placeholder="Életkor" />
+          <input type="number" name="age" value="<?= $params['values']['age'] ?? '' ?>" class="form-control <?= $isValidClass('age') ?>" placeholder="Életkor" />
           <div class="invalid-feedback">
-
+            <?php foreach ($params['errorMessages']['age'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
 
         <div class="mb-3">
           Munkabér:
-          <input type="text" class="form-control" name="salary" placeholder="Munkabér" />
-          <div class="invalid-feedback">
+          <input type="text" class="form-control <?= $isValidClass('salary') ?>" name="salary" value="<?= $params['values']['salary'] ?? '' ?>" placeholder="Munkabér" />
 
+          <div class="invalid-feedback">
+            <?php foreach ($params['errorMessages']['salary'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
@@ -72,19 +87,24 @@
           <div class="input-group-prepend">
             <span class="input-group-text">@</span>
           </div>
-          <input type="text" class="form-control" placeholder="Email" name="email" />
+          <input type="text" class="form-control <?= $isValidClass('email') ?>" placeholder="Email" name="email" value="<?= $params['values']['email'] ?? '' ?>" />
 
           <div class="invalid-feedback">
-
+            <?php foreach ($params['errorMessages']['email'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
       <div class="form-group mb-2">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="isVerified" />
+          <input class="form-check-input <?= $isValidClass('isVerified') ?>" type="checkbox" name="isVerified" <?= $params['values']['isVerified'] ?? '' ? 'checked' : '' ?> />
           <label class="form-check-label">Elfogadom a felhasználói feltételeket</label>
-          <div class="invalid-feedback">
 
+          <div class="invalid-feedback">
+            <?php foreach ($params['errorMessages']['isVerified'] as $error) : ?>
+              <?= $error ?> <br />
+            <?php endforeach; ?>
           </div>
         </div>
       </div>

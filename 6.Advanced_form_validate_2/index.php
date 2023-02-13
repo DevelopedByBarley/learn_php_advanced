@@ -24,14 +24,46 @@ $handlerFunction();
 function homeHandler()
 {
 
-    if (isset($_GET["errors"])) {
-        $decodedErrors =  json_decode(base64_decode($_GET["errors"]), true);
-        var_dump($decodedErrors);
-    }
+
+    $decodedErrors =  json_decode(base64_decode($_GET["errors"] ?? ""), true);
+
+    $errorMessages = getErrorMessages(employeeSchema(), $decodedErrors) ?? "";
+
     echo render("home.phtml", [
-        "isSuccess" => true
+        "isSuccess" => true,
+        "errorMessages" => $errorMessages
     ]);
 }
+
+
+function getErrorMessages($schema, $errors)
+{
+    $validatorNameToMessage = [
+        "required" => fn () => "Mező megadása kötelező.",
+        "largerThan" => fn ($value, $param) => "Mező nagyobb kell legyen mint $param. " . (!$value ? "Semmi nem" : $value) . " lett megadva.",
+        "maxLength" => fn ($value, $param) => "Mező kevesebb karakterből álljon mint $param. " . strlen($value) . " karakter lett megadva.",
+        "between" =>  fn ($value, $params) => "Mező értékének " .  $params[0] . " és " . $params[1] . " között kell lennie. " . (!$value ? "Semmi nem" : $value) . " lett megadva.",
+        "enum" => fn ($value, $param) =>  "Mező a következő értékek valamelyikének kell lennie: " .  $param . ". " . ((int)$value ?? "Semmi nem") . " lett megadva.",
+        "email" => fn ($value, $param) => "Mező értéknek érvényes email címnek kell lennie. '" . ($value ?? "nothing") . "' lett megadva.",
+    ];
+
+
+
+    $ret = [];
+    if (isset($errors)) {
+        foreach ($errors as $fieldName => $errorsForField) {
+            foreach ($errorsForField as $err) {
+                $toMessageFunction = $validatorNameToMessage[$err["validatorName"]];
+                $shemaForField = $schema[$fieldName];
+
+                $ret[$fieldName][] = $toMessageFunction($err["value"],  $shemaForField[$err["validatorName"]]["params"]);
+            }
+        }
+    }
+
+    return $ret;
+}
+
 
 function employeeSchema()
 {
@@ -51,7 +83,6 @@ function employeeSchema()
 
 function toSchema($employer)
 {
-    echo "<pre>";
 
     $ret = [];
 
@@ -66,6 +97,7 @@ function toSchema($employer)
 
     return $ret;
 }
+
 
 
 
