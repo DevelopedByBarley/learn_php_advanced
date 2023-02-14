@@ -1,0 +1,91 @@
+<div class="content-body">
+  <h1 class="display-4 text-center p-3">Receptek:</h1>
+  <div id="app-container" class="row">
+    {% for recipe in recipes %}
+      <div class="col-6 p-3">
+        <div 
+          class="recipe-card" 
+          style="background: url('/public/images/{{ recipe.imageURL }}')"
+        >
+          <div class="time-badge">
+            <h2>
+              {{recipe.steps | reduce((carry, v) => carry + v.timer, 0) | date("i:s")}}
+            </h2>
+            <p>alatt kész</p>
+          </div>
+          <div class="description text-center">
+            <h1>
+              {{ recipe.name | upper }}
+            </h1>
+            <br>
+          </div>
+        </div>
+        <div class="content py-2 px-1">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <button 
+                class="nav-link active" 
+                data-bs-toggle="tab" 
+                data-bs-target="#ingredients-{{recipe.id}}"
+              >
+                Hozzávalók
+              </button>
+            </li>
+            <li class="nav-item">
+              <button 
+                class="nav-link" 
+                data-bs-toggle="tab" 
+                data-bs-target="#steps-{{recipe.id}}"
+              >
+                Elkészítés
+              </button>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="ingredients-{{recipe.id}}">
+              <div class="tabcontent">
+                <ul class="list-group list-group-flush p-2">
+                   {% for ingredient in recipe.ingredients %}
+                    <li class="list-group-item">
+                      {{ ingredient.name }}
+                      {{ ingredient.quantity }}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="steps-{{recipe.id}}">
+              <div class="tabcontent p-2">
+                {% if recipe.steps | length %}
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Lépések</th>
+                        <th scope="col">Idő</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for step in recipe.steps %}
+                        <tr>
+                          <th scope="row">{{loop.index}}</th>
+                          <td>{{step.content}}</td>
+                          <td>{{step.timer == 0 ? "" : "#{step.timer} perc"}}</td>
+                        </tr>
+                      {% endfor %}
+
+                    </tbody>
+                  </table>
+
+                   {% else %}
+                  Ehhez a recepthez jelenleg nem elérhető az elkészítés...
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
